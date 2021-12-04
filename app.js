@@ -1,3 +1,5 @@
+const fs = require("fs");
+const path= require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -9,7 +11,8 @@ const HttpError = require("./models/error");
 
 const app = express();
 app.use(bodyParser.json());
-
+// chuyển về đường dẫn static ms access đc file lưu
+app.use("/uploads/images", express.static(path.join("uploads","images")) );
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -28,6 +31,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, (err) => {
+      console.log(err);
+    });
+  }
   if (res.headerSent) {
     return next(error);
   }
@@ -37,7 +45,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://admin:96mJKtS86DgVDuF@cluster0.abumt.mongodb.net/places?retryWrites=true&w=majority"
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.abumt.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(5000);

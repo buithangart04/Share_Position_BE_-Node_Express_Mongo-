@@ -1,0 +1,8 @@
+{
+    "env":{
+        "DB_USER":"admin",
+        "DB_PASSWORD":"96mJKtS86DgVDuF",
+        "DB_NAME":"places",
+        "JWT_KEY":"supersecret_dont_share"
+    }
+}
